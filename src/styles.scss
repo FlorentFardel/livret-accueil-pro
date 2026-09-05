@@ -1,0 +1,27 @@
+@import 'quill/dist/quill.core.css';
+@import 'quill/dist/quill.snow.css';
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  font-family: 'Roboto', sans-serif;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background-attachment: fixed;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+app-root, app-home, app-category-list, app-subcategory-list, app-subcategory-detail {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.hidden-file-input {
+  display: none !important;
+}

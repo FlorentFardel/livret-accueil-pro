@@ -1,0 +1,120 @@
+@if (category(); as cat) {
+  <div class="navigation-header">
+    <button mat-icon-button class="back-btn" (click)="goBack()" title="Retour catégories">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2 class="view-title">{{ cat.name }}</h2>
+  </div>
+
+  @if (isAdmin()) {
+    <button mat-raised-button color="primary" class="full-width-btn admin-margin-btn" (click)="openForm()">
+      <mat-icon>add</mat-icon> Ajouter un élément
+    </button>
+  }
+
+  @if (isAdmin() && showForm()) {
+    <mat-card class="admin-form-card">
+      <h3>{{ subForm().id ? 'Modifier' : 'Nouveau' }}</h3>
+      
+      <div class="quill-editor-wrapper">
+        <label class="editor-label">Titre</label>
+        <quill-editor [(ngModel)]="subForm().title" [modules]="editorConfig"></quill-editor>
+      </div>
+
+      <div class="file-upload-field">
+        <mat-form-field appearance="outline" class="flex-input">
+          <mat-label>Icône</mat-label>
+          <input matInput [(ngModel)]="subForm().icon">
+        </mat-form-field>
+        <button mat-stroked-button color="primary" type="button" (click)="fileSubIcon.click()" [disabled]="isUploading()">
+          <mat-icon>cloud_upload</mat-icon>
+        </button>
+        <input #fileSubIcon type="file" accept="image/*" class="hidden-file-input" (change)="onFileSelected($event, 'subIcon')">
+      </div>
+      
+      <div class="quill-editor-wrapper">
+        <label class="editor-label">Texte / Instructions</label>
+        <quill-editor [(ngModel)]="subForm().instructions" [modules]="editorConfig"></quill-editor>
+      </div>
+
+      <div class="custom-links-admin-section">
+        <label class="editor-label">Liens Externes</label>
+        @for (linkItem of subForm().links; track $index) {
+          <div class="link-edit-row">
+            <mat-form-field appearance="outline" class="flex-input">
+              <mat-label>Texte</mat-label>
+              <input matInput [ngModel]="linkItem.label" (ngModelChange)="updateSubLink($index, 'label', $event)">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="flex-input">
+              <mat-label>URL</mat-label>
+              <input matInput [ngModel]="linkItem.url" (ngModelChange)="updateSubLink($index, 'url', $event)">
+            </mat-form-field>
+            <button mat-icon-button color="warn" type="button" (click)="removeSubLink($index)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        }
+        <button mat-stroked-button color="primary" type="button" (click)="addSubLink()">
+          <mat-icon>add_link</mat-icon> Ajouter un lien
+        </button>
+      </div>
+
+      <div class="file-upload-field">
+        <mat-form-field appearance="outline" class="flex-input">
+          <mat-label>Image Média</mat-label>
+          <input matInput [(ngModel)]="subForm().imageUrl">
+        </mat-form-field>
+        <button mat-stroked-button color="primary" type="button" (click)="fileSubImage.click()" [disabled]="isUploading()">
+          <mat-icon>image</mat-icon>
+        </button>
+        <input #fileSubImage type="file" accept="image/*" class="hidden-file-input" (change)="onFileSelected($event, 'subImage')">
+      </div>
+
+      <div class="file-upload-field">
+        <mat-form-field appearance="outline" class="flex-input">
+          <mat-label>Document PDF</mat-label>
+          <input matInput [(ngModel)]="subForm().pdfUrl">
+        </mat-form-field>
+        <button mat-stroked-button color="accent" type="button" (click)="fileSubPdf.click()" [disabled]="isUploading()">
+          <mat-icon>picture_as_pdf</mat-icon>
+        </button>
+        <input #fileSubPdf type="file" accept="application/pdf" class="hidden-file-input" (change)="onFileSelected($event, 'subPdf')">
+      </div>
+      
+      <div class="form-actions">
+        <button mat-button type="button" (click)="showForm.set(false)">Annuler</button>
+        <button mat-raised-button color="primary" type="button" (click)="saveSubCategory()" [disabled]="isUploading()">
+          Sauvegarder
+        </button>
+      </div>
+    </mat-card>
+  }
+
+  <div class="subcategory-grid">
+    @for (sub of cat.subCategories; track sub.id) {
+      <mat-card class="subcategory-card" [routerLink]="['/guide', sub.id]">
+        @if (isAdmin()) {
+          <div class="tile-actions-corner">
+            <button mat-icon-button color="primary" type="button" (click)="$event.stopPropagation(); openForm(sub)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" type="button" (click)="$event.stopPropagation(); deleteSubCategory(sub.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        }
+        
+        <div class="sub-header-align">
+          @if (sub.icon && (sub.icon.includes('http') || sub.icon.includes('data:image'))) {
+            <img [src]="sub.icon" class="sub-avatar-img" alt="Icône">
+          } @else {
+            <mat-icon class="sub-material-icon" color="primary">{{ sub.icon || 'info' }}</mat-icon>
+          }
+        </div>
+        <div class="sub-title ql-snow">
+          <div class="ql-editor" [innerHTML]="sub.title | safeHtml"></div>
+        </div>
+      </mat-card>
+    }
+  </div>
+}

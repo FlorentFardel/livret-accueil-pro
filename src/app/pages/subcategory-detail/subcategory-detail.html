@@ -1,0 +1,175 @@
+@if (categoryData(); as data) {
+
+  <!-- CAS 1 : VUE DÉTAILLÉE D'UN SOUS-ÉLÉMENT SÉLECTIONNÉ -->
+  @if (selectedSubSub(); as item) {
+    <div class="navigation-header">
+      <button mat-icon-button class="back-btn" (click)="clearSelectedSubSub()" title="Retour aux éléments">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h2 class="view-title ql-snow">
+        <span class="ql-editor" [innerHTML]="item.title | safeHtml"></span>
+      </h2>
+    </div>
+
+    <div class="sub-content-section">
+      @if (item.instructions) {
+        <div class="instruction-text ql-snow">
+          <div class="ql-editor" [innerHTML]="item.instructions | safeHtml"></div>
+        </div>
+      }
+
+      @if (item.imageUrl) {
+        <img [src]="item.imageUrl" class="media-image" alt="Média">
+      }
+
+      @if (item.pdfUrl) {
+        <button mat-stroked-button color="accent" type="button" class="pdf-btn" (click)="openPdf(item.pdfUrl)">
+          <mat-icon>picture_as_pdf</mat-icon> Consulter le document PDF
+        </button>
+      }
+    </div>
+  }
+
+  <!-- CAS 2 : GRILLE DES CARTES COMPACTES NIVEAU 3 -->
+  @else {
+    <div class="navigation-header">
+      <button mat-icon-button class="back-btn" (click)="goBack()" title="Retour aux sous-catégories">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h2 class="view-title ql-snow">
+        <span class="ql-editor" [innerHTML]="data.subCategory.title | safeHtml"></span>
+      </h2>
+    </div>
+
+    <div class="sub-content-section">
+      @if (data.subCategory.instructions) {
+        <div class="instruction-text ql-snow">
+          <div class="ql-editor" [innerHTML]="data.subCategory.instructions | safeHtml"></div>
+        </div>
+      }
+      
+      @if (data.subCategory.links && data.subCategory.links.length > 0) {
+        <div class="detail-links-group">
+          @for (l of data.subCategory.links; track $index) {
+            <a [href]="l.url" target="_blank" rel="noopener noreferrer" mat-raised-button color="primary" class="external-link-btn-large">
+              <mat-icon>directions</mat-icon> {{ l.label }}
+            </a>
+          }
+        </div>
+      }
+
+      @if (data.subCategory.imageUrl) { 
+        <img [src]="data.subCategory.imageUrl" class="media-image" alt="Média"> 
+      }
+      
+      @if (data.subCategory.pdfUrl) { 
+        <button mat-stroked-button color="accent" type="button" class="pdf-btn" (click)="openPdf(data.subCategory.pdfUrl)">
+          <mat-icon>picture_as_pdf</mat-icon> Consulter le document PDF
+        </button> 
+      }
+    </div>
+
+    @if (isAdmin()) {
+      <button mat-raised-button color="primary" class="full-width-btn admin-margin-btn" (click)="openSubSubCategoryForm()">
+        <mat-icon>add</mat-icon> Ajouter un sous-élément
+      </button>
+    }
+
+    @if (isAdmin() && showSubSubForm()) {
+      <mat-card class="admin-form-card">
+        <h3>{{ subSubForm().id ? 'Modifier le sous-élément' : 'Nouveau sous-élément' }}</h3>
+        
+        <div class="quill-editor-wrapper">
+          <label class="editor-label">Titre</label>
+          <quill-editor [(ngModel)]="subSubForm().title" [modules]="editorConfig"></quill-editor>
+        </div>
+
+        <div class="file-upload-field">
+          <mat-form-field appearance="outline" class="flex-input">
+            <mat-label>Icône (Nom Material ou Fichier)</mat-label>
+            <input matInput [(ngModel)]="subSubForm().icon">
+          </mat-form-field>
+          <button mat-stroked-button color="primary" type="button" (click)="fileSubSubIcon.click()" [disabled]="isUploading()">
+            <mat-icon>cloud_upload</mat-icon>
+          </button>
+          <input #fileSubSubIcon type="file" accept="image/*" class="hidden-file-input" (change)="onFileSelected($event, 'subSubIcon')">
+        </div>
+        
+        <div class="quill-editor-wrapper">
+          <label class="editor-label">Texte / Instructions</label>
+          <quill-editor [(ngModel)]="subSubForm().instructions" [modules]="editorConfig"></quill-editor>
+        </div>
+
+        <div class="file-upload-field">
+          <mat-form-field appearance="outline" class="flex-input">
+            <mat-label>Image Média</mat-label>
+            <input matInput [(ngModel)]="subSubForm().imageUrl">
+          </mat-form-field>
+          <button mat-stroked-button color="primary" type="button" (click)="fileSubSubImage.click()" [disabled]="isUploading()">
+            <mat-icon>image</mat-icon>
+          </button>
+          <input #fileSubSubImage type="file" accept="image/*" class="hidden-file-input" (change)="onFileSelected($event, 'subSubImage')">
+        </div>
+
+        <div class="file-upload-field">
+          <mat-form-field appearance="outline" class="flex-input">
+            <mat-label>Document PDF</mat-label>
+            <input matInput [(ngModel)]="subSubForm().pdfUrl">
+          </mat-form-field>
+          <button mat-stroked-button color="accent" type="button" (click)="fileSubSubPdf.click()" [disabled]="isUploading()">
+            <mat-icon>picture_as_pdf</mat-icon>
+          </button>
+          <input #fileSubSubPdf type="file" accept="application/pdf" class="hidden-file-input" (change)="onFileSelected($event, 'subSubPdf')">
+        </div>
+        
+        <div class="form-actions">
+          <button mat-button type="button" (click)="showSubSubForm.set(false)">Annuler</button>
+          <button mat-raised-button color="primary" type="button" (click)="saveSubSubCategory()" [disabled]="isUploading()">
+            Sauvegarder
+          </button>
+        </div>
+      </mat-card>
+    }
+
+    <!-- GRILLE DE CARTES COMPACTES CLIQUABLES (DISPOSITION VERTICALE) -->
+    @if (data.subCategory.subSubCategories && data.subCategory.subSubCategories.length > 0) {
+      <div class="subcategory-grid">
+        @for (ss of data.subCategory.subSubCategories; track ss.id) {
+          <mat-card class="subcategory-card clickable-card" (click)="selectSubSub(ss)">
+            
+            @if (isAdmin()) {
+              <div class="tile-actions-corner">
+                <button mat-icon-button color="primary" type="button" (click)="$event.stopPropagation(); openSubSubCategoryForm(ss)" title="Modifier">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" type="button" (click)="$event.stopPropagation(); deleteSubSubCategory(ss.id)" title="Supprimer">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            }
+            
+            <div class="sub-header-align">
+              @if (ss.icon && (ss.icon.includes('http') || ss.icon.includes('data:image'))) {
+                <img [src]="ss.icon" class="sub-avatar-img" alt="Icône">
+              } @else {
+                <mat-icon class="sub-material-icon" color="primary">{{ ss.icon || 'info' }}</mat-icon>
+              }
+            </div>
+            <div class="sub-title ql-snow">
+              <div class="ql-editor" [innerHTML]="ss.title | safeHtml"></div>
+            </div>
+
+          </mat-card>
+        }
+      </div>
+    }
+  }
+
+} @else {
+  <div class="navigation-header">
+    <button mat-icon-button class="back-btn" (click)="goBack()" title="Retour aux sous-catégories">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2 class="view-title">Élément non trouvé</h2>
+  </div>
+}

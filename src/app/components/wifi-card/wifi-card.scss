@@ -1,0 +1,23 @@
+.wifi-card-container {
+  margin-bottom: 2rem;
+  border-radius: 12px;
+  
+  .wifi-details {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #f0f0f0;
+
+    .info-label { color: #666; font-size: 0.9rem; }
+    .info-value { font-size: 1.1rem; letter-spacing: 0.5px; }
+    .password-hidden { letter-spacing: 2px; color: #888; }
+  }
+}

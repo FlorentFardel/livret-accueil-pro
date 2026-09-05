@@ -1,0 +1,46 @@
+/* ==========================================================================
+   COMPOSANT LOGIN - STYLES PRINCIPAUX
+   Tout est imbriqué dans .login-container pour protéger le scope de la page.
+   ========================================================================== */
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh; /* Permet de centrer la carte verticalement sans prendre toute la page */
+  padding: 1rem;
+
+  /* ==========================================================================
+     1. CARTE DE CONNEXION
+     ========================================================================== */
+  .login-card {
+    width: 100%;
+    max-width: 400px; /* Évite que la carte soit immense sur un écran d'ordinateur */
+    padding: 1rem;
+  }
+
+  /* ==========================================================================
+     2. FORMULAIRE ET CHAMPS
+     ========================================================================== */
+  .login-form {
+    margin-top: 1.5rem;
+    
+    .full-width {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+  }
+
+  /* ==========================================================================
+     3. MESSAGES D'ERREUR (Mot de passe incorrect, etc.)
+     ========================================================================== */
+  .error-text {
+    color: #f44336; /* Rouge standard Material Design */
+    margin-top: -10px; /* Remonte un peu le texte pour le coller à l'input */
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    text-align: center;
+    font-weight: 500;
+  }
+
+} /* <-- FIN DE .login-container */

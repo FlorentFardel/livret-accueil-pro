@@ -1,0 +1,107 @@
+<!-- ========================================================================== -->
+<!-- ACCUEIL DU LIVRET (100% DYNAMIQUE VIA FIRESTORE & INPUTS ADMIN)             -->
+<!-- ========================================================================== -->
+
+<div class="home-container">
+
+  <!-- ========================================== -->
+  <!-- BARRE DE GESTION ADMINISTRATEUR            -->
+  <!-- ========================================== -->
+  @if (isAdmin()) {
+    <div class="admin-bar">
+      <span class="admin-text">
+        <mat-icon>verified_user</mat-icon> 
+        Mode Édition
+      </span>
+      <div class="admin-actions">
+        <button mat-icon-button color="primary" (click)="openEdit()" title="Modifier l'accueil">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="logout()" title="Se déconnecter">
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- ========================================== -->
+  <!-- FORMULAIRE D'ÉDITION DE L'ACCUEIL         -->
+  <!-- ========================================== -->
+  @if (isEditing()) {
+    <mat-card class="edit-card">
+      <h3>Modifier l'accueil</h3>
+      
+      <!-- Saisie du nom du logement (Titre principal) -->
+      <div class="quill-editor-wrapper">
+        <label class="editor-label">Nom du logement / Titre principal</label>
+        <quill-editor [(ngModel)]="editForm().houseName" [modules]="editorConfig"></quill-editor>
+      </div>
+      
+      <!-- Saisie du texte d'introduction -->
+      <div class="quill-editor-wrapper">
+        <label class="editor-label">Texte de bienvenue / Introduction</label>
+        <quill-editor [(ngModel)]="editForm().introText" [modules]="editorConfig"></quill-editor>
+      </div>
+      
+      <!-- Saisie SSID Wi-Fi -->
+      <mat-form-field appearance="outline">
+        <mat-label>Réseau Wi-Fi (SSID)</mat-label>
+        <input matInput [(ngModel)]="editForm().wifiNetwork">
+      </mat-form-field>
+      
+      <!-- Saisie Mot de passe Wi-Fi -->
+      <mat-form-field appearance="outline">
+        <mat-label>Mot de passe Wi-Fi</mat-label>
+        <input matInput [(ngModel)]="editForm().wifiPassword">
+      </mat-form-field>
+      
+      <!-- Actions du formulaire -->
+      <div class="form-actions">
+        <button mat-button (click)="isEditing.set(false)">Annuler</button>
+        <button mat-raised-button color="primary" (click)="saveEdit()">Sauvegarder</button>
+      </div>
+    </mat-card>
+  } 
+  
+  <!-- ========================================== -->
+  <!-- AFFICHAGE PUBLIC DE LA PAGE D'ACCUEIL     -->
+  <!-- ========================================== -->
+  @else {
+    <section class="welcome-section">
+      <mat-icon class="home-icon">house</mat-icon>
+      
+      <!-- Titre 100% dynamique (Le texte fixe 'Bienvenue à' a été retiré) -->
+      <h2 class="welcome-title">
+        <span class="ql-snow">
+          <span class="ql-editor inline-title" [innerHTML]="config().houseName | safeHtml"></span>
+        </span>
+      </h2>
+
+      <!-- Texte de bienvenue dynamique -->
+      <div class="intro-text ql-snow">
+        <div class="ql-editor" [innerHTML]="config().introText | safeHtml"></div>
+      </div>
+    </section>
+
+    <!-- Carte des identifiants Wi-Fi -->
+    <mat-card class="wifi-card">
+      <div class="wifi-header">
+        <mat-icon color="primary">wifi</mat-icon>
+        <h3>Accès Wi-Fi</h3>
+      </div>
+      <div class="wifi-content">
+        <p><strong>Réseau :</strong> {{ config().wifiNetwork }}</p>
+        <p><strong>Mot de passe :</strong> {{ config().wifiPassword }}</p>
+      </div>
+    </mat-card>
+
+    <!-- Bouton d'accès au livret d'accueil -->
+    <div class="action-section">
+      <button mat-raised-button color="primary" routerLink="/guide" class="guide-btn">
+        <mat-icon>menu_book</mat-icon>
+        Consulter le livret d'accueil
+      </button>
+    </div>
+  }
+
+</div>

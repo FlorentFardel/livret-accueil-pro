@@ -1,0 +1,34 @@
+<mat-card class="wifi-card-container">
+  <mat-card-header>
+    <mat-icon mat-card-avatar color="primary" aria-hidden="true">wifi</mat-icon>
+    <mat-card-title>Connexion Wi-Fi</mat-card-title>
+    <mat-card-subtitle>Réseau très haut débit</mat-card-subtitle>
+  </mat-card-header>
+  
+  <mat-card-content class="wifi-details">
+    <div class="info-row">
+      <span class="info-label">Réseau :</span>
+      <strong class="info-value">{{ networkName() }}</strong>
+    </div>
+    
+    <div class="info-row">
+      <span class="info-label">Mot de passe :</span>
+      @if (isPasswordVisible()) {
+        <strong class="info-value password-visible">{{ networkPassword() }}</strong>
+      } @else {
+        <strong class="info-value password-hidden" aria-label="Mot de passe masqué">••••••••••••</strong>
+      }
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions align="end">
+    <button mat-button (click)="toggleVisibility()" [attr.aria-label]="toggleButtonText() + ' le mot de passe'">
+      <mat-icon>{{ toggleIcon() }}</mat-icon>
+      {{ toggleButtonText() }}
+    </button>
+    <button mat-raised-button color="primary" (click)="copyToClipboard()">
+      <mat-icon>content_copy</mat-icon>
+      Copier
+    </button>
+  </mat-card-actions>
+</mat-card>

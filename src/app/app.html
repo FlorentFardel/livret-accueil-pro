@@ -1,0 +1,19 @@
+<mat-toolbar color="primary" class="main-header">
+  <!-- Redirection vers l'accueil au clic sur le logo/titre -->
+  <div class="brand-container" routerLink="/" role="button" tabindex="0">
+    <mat-icon class="header-icon">home</mat-icon>
+    <span class="header-title">Livret SuiteHome</span>
+  </div>
+  
+  <span class="spacer"></span> 
+  
+  <!-- Bouton d'accès à la connexion Admin -->
+  <button mat-icon-button routerLink="/login" aria-label="Connexion Admin">
+    <mat-icon>lock</mat-icon>
+  </button>
+</mat-toolbar>
+
+<main class="main-content">
+  <!-- Emplacement dynamique de nos pages selon la route (/ , /guide , /guide/:id, /login) -->
+  <router-outlet></router-outlet>
+</main>

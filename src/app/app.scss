@@ -1,0 +1,21 @@
+.main-header {
+  .header-icon {
+    margin-right: 10px;
+  }
+  
+  .header-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+
+  // La classe d'espacement propre
+  .spacer {
+    flex: 1 1 auto;
+  }
+}
+
+.main-content {
+  padding: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}

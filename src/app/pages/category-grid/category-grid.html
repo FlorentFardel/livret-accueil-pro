@@ -1,0 +1,76 @@
+<div class="welcome-header">
+  <h2 class="page-title">Que cherchez-vous ?</h2>
+  
+  @if (isAdmin()) {
+    <button 
+      mat-mini-fab 
+      color="primary" 
+      class="admin-add-btn" 
+      (click)="showCategoryForm() ? showCategoryForm.set(false) : openAddCategory()"
+      title="Ajouter une catégorie">
+      <mat-icon>{{ showCategoryForm() ? 'close' : 'add' }}</mat-icon>
+    </button>
+  }
+</div>
+
+@if (isAdmin() && showCategoryForm()) {
+  <mat-card class="admin-form-card">
+    <h3>{{ editingCategoryId() ? 'Modifier la catégorie' : 'Nouvelle Catégorie' }}</h3>
+    
+    <mat-form-field appearance="outline" class="full-width-field">
+      <mat-label>Nom de la catégorie</mat-label>
+      <input matInput [ngModel]="newCatName()" (ngModelChange)="newCatName.set($event)" placeholder="ex: Équipements">
+    </mat-form-field>
+
+    <div class="file-upload-field">
+      <mat-form-field appearance="outline" class="flex-input">
+        <mat-label>Icône (Nom Material ou URL / Base64)</mat-label>
+        <input matInput [ngModel]="newCatIcon()" (ngModelChange)="newCatIcon.set($event)" placeholder="ex: tv ou URL">
+      </mat-form-field>
+      
+      <button mat-stroked-button color="primary" type="button" (click)="fileCatIcon.click()" [disabled]="isUploading()" title="Choisir une icône/image locale">
+        <mat-icon>cloud_upload</mat-icon>
+      </button>
+      <input #fileCatIcon type="file" accept="image/*" style="display:none" (change)="onFileSelected($event)">
+    </div>
+
+    <div class="form-actions">
+      <button mat-button (click)="showCategoryForm.set(false)">Annuler</button>
+      <button mat-raised-button color="primary" (click)="saveCategory()" [disabled]="!newCatName() || isUploading()">
+        Sauvegarder
+      </button>
+    </div>
+  </mat-card>
+}
+
+<div class="category-grid">
+  @for (cat of categories(); track cat.id) {
+    <mat-card class="category-tile clickable-card" (click)="categorySelected.emit(cat)">
+      
+      @if (isAdmin()) {
+        <div class="tile-actions-corner">
+          <button mat-icon-button color="primary" (click)="openEditCategory(cat, $event)" title="Éditer">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteCategory(cat.id, $event)" title="Supprimer">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      }
+
+      @if (cat.icon && (cat.icon.includes('http') || cat.icon.includes('data:image'))) {
+        <img [src]="cat.icon" class="custom-img-icon" alt="Icône">
+      } @else {
+        <mat-icon class="tile-icon" color="primary">{{ cat.icon || 'folder' }}</mat-icon>
+      }
+      
+      <span class="tile-title">{{ cat.name }}</span>
+    </mat-card>
+  }
+</div>
+
+<div class="home-return-section">
+  <button mat-stroked-button color="primary" routerLink="/" class="home-return-btn">
+    <mat-icon>home</mat-icon> Retour à l'accueil
+  </button>
+</div>

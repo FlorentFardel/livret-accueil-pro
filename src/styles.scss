@@ -1,5 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 @import 'quill/dist/quill.core.css';
 @import 'quill/dist/quill.snow.css';
+
+/* ... le reste de ton CSS inchangé ... */
 
 html, body {
   margin: 0;
